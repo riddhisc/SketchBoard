@@ -72,8 +72,10 @@ const Sketchboard = () => {
     ctx.save();
     for (let i = 0; i < 5; i++) {
       const angle = Math.random() * Math.PI * 2;
-      const distance = 4 + Math.random() * 14;
-      const size = 1 + Math.random() * 2.5;
+      const glitterWidth = Math.max(lineWidth, 6);
+      const distance = glitterWidth * 0.7 + Math.random() * glitterWidth * 0.8;
+      const size = 0.6 + Math.random() * 1.2;
+      ctx.globalAlpha = 0.8;
       ctx.fillStyle = glitterColors[i % glitterColors.length];
       ctx.beginPath();
       ctx.arc(
@@ -134,7 +136,7 @@ const Sketchboard = () => {
     ctx.beginPath();
     ctx.moveTo(x, y);
     ctx.strokeStyle = rainbowMode ? getRainbowColor() : (tool === 'eraser' ? 'white' : color);
-    ctx.lineWidth = lineWidth;
+    ctx.lineWidth = glitterMode && tool !== 'eraser' ? Math.max(lineWidth, 6) : lineWidth;
     setIsDrawing(true);
   };
 
@@ -393,6 +395,7 @@ const Sketchboard = () => {
               onClick={() => {
                 setGlitterMode(!glitterMode);
                 setTool('brush');
+                setLineWidth(prev => Math.max(prev, 6));
               }}
               className="h-10 w-10 p-2"
               title="Glitter Brush"
@@ -450,7 +453,7 @@ const Sketchboard = () => {
               <span>{tool === 'eraser' ? 'Eraser size' : 'Size'}</span>
               <input
                 type="range"
-                min="1"
+                min={glitterMode ? 6 : 1}
                 max={maxLineWidth}
                 value={lineWidth}
                 onChange={(e) => setLineWidth(parseInt(e.target.value))}
