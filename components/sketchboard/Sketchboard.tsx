@@ -220,15 +220,25 @@ const Sketchboard = () => {
   };
 
   return (
-    <Card className="w-full max-w-4xl mx-auto">
-      <CardHeader className="space-y-1">
-        <CardTitle className="text-2xl">Advanced Sketchboard</CardTitle>
-        <div className="flex flex-wrap gap-4 items-center">
-          <div className="flex space-x-2">
+    <Card className="w-full max-w-6xl overflow-hidden border-slate-200/80 bg-white/95 shadow-xl shadow-slate-200/60">
+      <CardHeader className="space-y-5 border-b border-slate-200/80 bg-slate-50/80 p-5 sm:p-6">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <CardTitle className="text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">Sketchboard</CardTitle>
+            <p className="mt-1 text-sm text-slate-500">Draw, explore, and download your ideas.</p>
+          </div>
+          <div className="inline-flex w-fit items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-600 shadow-sm">
+            <span className="h-2 w-2 rounded-full bg-emerald-500" />
+            {tool === 'brush' ? 'Brush' : tool.charAt(0).toUpperCase() + tool.slice(1)} tool
+          </div>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex items-center gap-1 rounded-xl border border-slate-200 bg-white p-1.5 shadow-sm" aria-label="Drawing tools">
             <Button
               variant={tool === 'brush' ? 'default' : 'outline'}
               onClick={() => setTool('brush')}
-              className="w-10 h-10 p-2"
+              className="h-10 w-10 p-2"
               title="Brush"
             >
               <Paintbrush className="h-5 w-5" />
@@ -236,7 +246,7 @@ const Sketchboard = () => {
             <Button
               variant={tool === 'eraser' ? 'default' : 'outline'}
               onClick={() => setTool('eraser')}
-              className="w-10 h-10 p-2"
+              className="h-10 w-10 p-2"
               title="Eraser"
             >
               <Eraser className="h-5 w-5" />
@@ -244,7 +254,7 @@ const Sketchboard = () => {
             <Button
               variant={tool === 'square' ? 'default' : 'outline'}
               onClick={() => setTool('square')}
-              className="w-10 h-10 p-2"
+              className="h-10 w-10 p-2"
               title="Square"
             >
               <Square className="h-5 w-5" />
@@ -252,7 +262,7 @@ const Sketchboard = () => {
             <Button
               variant={tool === 'circle' ? 'default' : 'outline'}
               onClick={() => setTool('circle')}
-              className="w-10 h-10 p-2"
+              className="h-10 w-10 p-2"
               title="Circle"
             >
               <Circle className="h-5 w-5" />
@@ -260,18 +270,18 @@ const Sketchboard = () => {
             <Button
               variant={tool === 'select' ? 'default' : 'outline'}
               onClick={() => setTool('select')}
-              className="w-10 h-10 p-2"
+              className="h-10 w-10 p-2"
               title="Select"
             >
               <MousePointer className="h-5 w-5" />
             </Button>
           </div>
 
-          <div className="flex space-x-2">
+          <div className="flex items-center gap-1 rounded-xl border border-slate-200 bg-white p-1.5 shadow-sm" aria-label="Effects">
             <Button
               variant={rainbowMode ? 'default' : 'outline'}
               onClick={() => setRainbowMode(!rainbowMode)}
-              className="w-10 h-10 p-2"
+              className="h-10 w-10 p-2"
               title="Rainbow Mode"
             >
               <Rainbow className="h-5 w-5" />
@@ -279,7 +289,7 @@ const Sketchboard = () => {
             <Button
               variant={mirrorMode ? 'default' : 'outline'}
               onClick={() => setMirrorMode(!mirrorMode)}
-              className="w-10 h-10 p-2"
+              className="h-10 w-10 p-2"
               title="Mirror Mode"
             >
               <Copy className="h-5 w-5" />
@@ -287,18 +297,18 @@ const Sketchboard = () => {
             <Button
               variant="outline"
               onClick={() => setSymmetryLines(prev => (prev % 8) + 1)}
-              className="w-10 h-10 p-2"
+              className="h-10 w-10 p-2"
               title="Symmetry Lines"
             >
               <RotateCw className="h-5 w-5" />
             </Button>
           </div>
 
-          <div className="flex space-x-2">
+          <div className="flex items-center gap-1 rounded-xl border border-slate-200 bg-white p-1.5 shadow-sm" aria-label="History and export">
             <Button
               variant="outline"
               onClick={undo}
-              className="w-10 h-10 p-2"
+              className="h-10 w-10 p-2"
               title="Undo"
             >
               <Undo2 className="h-5 w-5" />
@@ -306,44 +316,50 @@ const Sketchboard = () => {
             <Button
               variant="outline"
               onClick={downloadCanvas}
-              className="w-10 h-10 p-2"
+              className="h-10 w-10 p-2"
               title="Download"
             >
               <Download className="h-5 w-5" />
             </Button>
           </div>
 
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-3 py-2 shadow-sm">
             <input
               type="color"
               value={color}
               onChange={(e) => setColor(e.target.value)}
-              className="h-10 w-10"
+              className="h-9 w-9 cursor-pointer rounded-lg border-0 bg-transparent p-0"
               title="Color Picker"
             />
-            <input
-              type="range"
-              min="1"
-              max="20"
-              value={lineWidth}
-              onChange={(e) => setLineWidth(parseInt(e.target.value))}
-              className="w-32"
-              title="Brush Size"
-            />
+            <label className="flex items-center gap-2 text-xs font-medium text-slate-500">
+              <span>Size</span>
+              <input
+                type="range"
+                min="1"
+                max="20"
+                value={lineWidth}
+                onChange={(e) => setLineWidth(parseInt(e.target.value))}
+                className="w-28 accent-slate-900 sm:w-32"
+                title="Brush Size"
+              />
+              <span className="w-5 text-right text-slate-700">{lineWidth}</span>
+            </label>
           </div>
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-4 sm:p-6">
+        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-slate-100 p-2 shadow-inner sm:p-3">
         <canvas
           ref={canvasRef}
           width={800}
           height={600}
-          className="border border-gray-200 rounded-lg cursor-crosshair bg-white"
+          className="block h-auto w-full cursor-crosshair rounded-xl border border-slate-200 bg-white shadow-sm"
           onMouseDown={startDrawing}
           onMouseMove={draw}
           onMouseUp={stopDrawing}
           onMouseOut={stopDrawing}
         />
+        </div>
       </CardContent>
     </Card>
   );

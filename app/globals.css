@@ -41,6 +41,7 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply min-h-screen bg-slate-100 text-foreground antialiased;
+    background-image: radial-gradient(circle at top, rgba(226, 232, 240, 0.75), transparent 42rem);
   }
 }
