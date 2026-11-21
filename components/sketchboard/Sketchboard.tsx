@@ -66,13 +66,15 @@ const Sketchboard = () => {
   };
 
   const drawGlitter = (ctx, x, y) => {
-    const glitterColor = rainbowMode ? getRainbowColor() : color;
+    const glitterColors = rainbowMode
+      ? [getRainbowColor(), '#ffffff', '#fef08a', '#f9a8d4']
+      : [color, '#ffffff', '#fef08a', '#f9a8d4', '#c4b5fd'];
     ctx.save();
-    ctx.fillStyle = glitterColor;
     for (let i = 0; i < 5; i++) {
       const angle = Math.random() * Math.PI * 2;
       const distance = 4 + Math.random() * 14;
       const size = 1 + Math.random() * 2.5;
+      ctx.fillStyle = glitterColors[i % glitterColors.length];
       ctx.beginPath();
       ctx.arc(
         x + Math.cos(angle) * distance,
@@ -82,6 +84,19 @@ const Sketchboard = () => {
         Math.PI * 2
       );
       ctx.fill();
+
+      if (i % 2 === 0) {
+        const sparkleX = x + Math.cos(angle) * distance;
+        const sparkleY = y + Math.sin(angle) * distance;
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(sparkleX - 3, sparkleY);
+        ctx.lineTo(sparkleX + 3, sparkleY);
+        ctx.moveTo(sparkleX, sparkleY - 3);
+        ctx.lineTo(sparkleX, sparkleY + 3);
+        ctx.stroke();
+      }
     }
     ctx.restore();
   };
@@ -427,13 +442,23 @@ const Sketchboard = () => {
           </div>
 
           <div className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-3 py-2 shadow-sm">
-            <input
-              type="color"
-              value={color}
-              onChange={(e) => setColor(e.target.value)}
-              className="h-9 w-9 cursor-pointer rounded-lg border-0 bg-transparent p-0"
-              title="Color Picker"
-            />
+            <div
+              className="relative h-9 w-9 overflow-hidden rounded-lg border border-slate-200 shadow-inner"
+              style={{
+                background: glitterMode
+                  ? 'linear-gradient(135deg, #fef08a 0%, #f472b6 28%, #a78bfa 55%, #22d3ee 78%, #fde68a 100%)'
+                  : color,
+              }}
+              title={glitterMode ? 'Glitter colors' : 'Color Picker'}
+            >
+              <input
+                type="color"
+                value={color}
+                onChange={(e) => setColor(e.target.value)}
+                className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+                title="Color Picker"
+              />
+            </div>
             <label className="flex items-center gap-2 text-xs font-medium text-slate-500">
               <span>{tool === 'eraser' ? 'Eraser size' : 'Size'}</span>
               <input
