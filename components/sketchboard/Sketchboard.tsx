@@ -154,10 +154,11 @@ const Sketchboard = () => {
       return;
     }
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.putImageData(drawHistory[currentStep], 0, 0);
+    const isGeometryTool = ['square', 'circle', 'triangle', 'line', 'star'].includes(tool);
 
-    if (tool === 'square' || tool === 'circle' || tool === 'triangle' || tool === 'line' || tool === 'star') {
+    if (isGeometryTool) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.putImageData(drawHistory[currentStep], 0, 0);
       if (tool === 'square') {
         ctx.strokeRect(startPos.x, startPos.y, x - startPos.x, y - startPos.y);
       } else if (tool === 'circle') {
@@ -200,7 +201,7 @@ const Sketchboard = () => {
         ctx.closePath();
         ctx.stroke();
       }
-    } else {
+    } else if (tool === 'brush' || tool === 'eraser') {
       if (rainbowMode) {
         ctx.strokeStyle = getRainbowColor();
       }
@@ -285,7 +286,11 @@ const Sketchboard = () => {
           </div>
           <div className="inline-flex w-fit items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-600 shadow-sm">
             <span className="h-2 w-2 rounded-full bg-emerald-500" />
-            {tool === 'brush' ? 'Brush' : tool.charAt(0).toUpperCase() + tool.slice(1)} tool
+            {glitterMode && tool === 'brush'
+              ? 'Glitter brush'
+              : tool === 'brush'
+                ? 'Brush'
+                : tool.charAt(0).toUpperCase() + tool.slice(1)} tool
           </div>
         </div>
 
@@ -295,6 +300,7 @@ const Sketchboard = () => {
               variant={tool === 'brush' ? 'default' : 'outline'}
               onClick={() => {
                 setTool('brush');
+                setGlitterMode(false);
                 setLineWidth(prev => Math.min(prev, 20));
               }}
               className="h-10 w-10 p-2"
@@ -382,7 +388,10 @@ const Sketchboard = () => {
             </Button>
             <Button
               variant={glitterMode ? 'default' : 'outline'}
-              onClick={() => setGlitterMode(!glitterMode)}
+              onClick={() => {
+                setGlitterMode(!glitterMode);
+                setTool('brush');
+              }}
               className="h-10 w-10 p-2"
               title="Glitter Brush"
             >
