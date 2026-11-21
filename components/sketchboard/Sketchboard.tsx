@@ -22,6 +22,7 @@ const Sketchboard = () => {
   const [selectedShape, setSelectedShape] = useState(null);
   const [mirrorMode, setMirrorMode] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
+  const maxLineWidth = tool === 'eraser' ? 80 : 20;
 
   const saveToHistory = (imageData) => {
 
@@ -237,7 +238,10 @@ const Sketchboard = () => {
           <div className="flex items-center gap-1 rounded-xl border border-slate-200 bg-white p-1.5 shadow-sm" aria-label="Drawing tools">
             <Button
               variant={tool === 'brush' ? 'default' : 'outline'}
-              onClick={() => setTool('brush')}
+              onClick={() => {
+                setTool('brush');
+                setLineWidth(prev => Math.min(prev, 20));
+              }}
               className="h-10 w-10 p-2"
               title="Brush"
             >
@@ -245,7 +249,10 @@ const Sketchboard = () => {
             </Button>
             <Button
               variant={tool === 'eraser' ? 'default' : 'outline'}
-              onClick={() => setTool('eraser')}
+              onClick={() => {
+                setTool('eraser');
+                setLineWidth(prev => Math.max(prev, 20));
+              }}
               className="h-10 w-10 p-2"
               title="Eraser"
             >
@@ -332,15 +339,15 @@ const Sketchboard = () => {
               title="Color Picker"
             />
             <label className="flex items-center gap-2 text-xs font-medium text-slate-500">
-              <span>Size</span>
+              <span>{tool === 'eraser' ? 'Eraser size' : 'Size'}</span>
               <input
                 type="range"
                 min="1"
-                max="20"
+                max={maxLineWidth}
                 value={lineWidth}
                 onChange={(e) => setLineWidth(parseInt(e.target.value))}
-                className="w-28 accent-slate-900 sm:w-32"
-                title="Brush Size"
+                className="w-28 accent-slate-900 sm:w-36"
+                title={tool === 'eraser' ? 'Eraser Size' : 'Brush Size'}
               />
               <span className="w-5 text-right text-slate-700">{lineWidth}</span>
             </label>
