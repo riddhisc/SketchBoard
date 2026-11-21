@@ -4,7 +4,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { 
   Paintbrush, Eraser, Undo2, Download, Square, Circle, 
-  MousePointer, Rainbow, Move, Copy, RotateCw, Layers
+  MousePointer, Rainbow, Copy, RotateCw
 } from 'lucide-react';
 
 const Sketchboard = () => {
@@ -130,11 +130,6 @@ const Sketchboard = () => {
     ctx.putImageData(drawHistory[currentStep], 0, 0);
 
     if (tool === 'square' || tool === 'circle') {
-      const size = Math.max(
-        Math.abs(x - startPos.x),
-        Math.abs(y - startPos.y)
-      );
-      
       if (tool === 'square') {
         ctx.strokeRect(startPos.x, startPos.y, x - startPos.x, y - startPos.y);
       } else {
