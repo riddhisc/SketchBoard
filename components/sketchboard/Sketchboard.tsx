@@ -67,8 +67,8 @@ const Sketchboard = () => {
 
   const drawGlitter = (ctx, x, y) => {
     const glitterColors = rainbowMode
-      ? [getRainbowColor(), '#ffffff', '#fef08a', '#f9a8d4']
-      : [color, '#ffffff', '#fef08a', '#f9a8d4', '#c4b5fd'];
+      ? [getRainbowColor(), '#ffffff', '#fef08a']
+      : [color, color, color, '#ffffff', '#cbd5e1'];
     ctx.save();
     for (let i = 0; i < 5; i++) {
       const angle = Math.random() * Math.PI * 2;
@@ -84,19 +84,6 @@ const Sketchboard = () => {
         Math.PI * 2
       );
       ctx.fill();
-
-      if (i % 2 === 0) {
-        const sparkleX = x + Math.cos(angle) * distance;
-        const sparkleY = y + Math.sin(angle) * distance;
-        ctx.strokeStyle = '#ffffff';
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.moveTo(sparkleX - 3, sparkleY);
-        ctx.lineTo(sparkleX + 3, sparkleY);
-        ctx.moveTo(sparkleX, sparkleY - 3);
-        ctx.lineTo(sparkleX, sparkleY + 3);
-        ctx.stroke();
-      }
     }
     ctx.restore();
   };
@@ -446,7 +433,7 @@ const Sketchboard = () => {
               className="relative h-9 w-9 overflow-hidden rounded-lg border border-slate-200 shadow-inner"
               style={{
                 background: glitterMode
-                  ? 'linear-gradient(135deg, #fef08a 0%, #f472b6 28%, #a78bfa 55%, #22d3ee 78%, #fde68a 100%)'
+                  ? `linear-gradient(135deg, ${color} 0%, #ffffff 24%, ${color} 48%, #cbd5e1 72%, ${color} 100%)`
                   : color,
               }}
               title={glitterMode ? 'Glitter colors' : 'Color Picker'}
