@@ -1,49 +1,36 @@
-# SketchBoard
-A simple, light weight whiteboard for collaborative drawings, sketches, annotations and more.
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## How to Run locally
+## Getting Started
 
-1. Setup the Client
-```
-cd client 
-npm install
-```
+First, run the development server:
 
-2. Setup the Server
-
-```
-cd server
-npm install
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
 ```
 
-3. Run Client Locally
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-```
-cd client
-npm start
-```
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-4. Run Server Locally
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-```
-cd server
-node server.js
-```
+## Learn More
 
-This runs the client on `localhost:3000` and the server runs on `localhost:5000`.
+To learn more about Next.js, take a look at the following resources:
 
-## Tech Stack used
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-Client
-* React.js
-* Web Canvas
-* Socket IO Client
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-Server
-* Node.js
-* Socket IO Server
+## Deploy on Vercel
 
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-
-
-
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
