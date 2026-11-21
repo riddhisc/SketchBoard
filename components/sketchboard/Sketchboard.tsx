@@ -3,8 +3,8 @@ import { useState, useEffect, useRef } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { 
-  Paintbrush, Eraser, Undo2, Download, Square, Circle, 
-  MousePointer, Rainbow, Copy, RotateCw
+  Paintbrush, Eraser, Undo2, Download, Square, Circle, Triangle, Minus,
+  Star, MousePointer, Rainbow, Copy, RotateCw, Sparkles
 } from 'lucide-react';
 
 const Sketchboard = () => {
@@ -21,6 +21,7 @@ const Sketchboard = () => {
   const [shapes, setShapes] = useState([]);
   const [selectedShape, setSelectedShape] = useState(null);
   const [mirrorMode, setMirrorMode] = useState(false);
+  const [glitterMode, setGlitterMode] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
   const maxLineWidth = tool === 'eraser' ? 80 : 20;
 
@@ -55,6 +56,36 @@ const Sketchboard = () => {
     return `hsl(${hue}, 100%, 50%)`;
   };
 
+  const getCanvasPoint = (e) => {
+    const canvas = canvasRef.current;
+    const rect = canvas.getBoundingClientRect();
+    return {
+      x: (e.clientX - rect.left) * (canvas.width / rect.width),
+      y: (e.clientY - rect.top) * (canvas.height / rect.height),
+    };
+  };
+
+  const drawGlitter = (ctx, x, y) => {
+    const glitterColor = rainbowMode ? getRainbowColor() : color;
+    ctx.save();
+    ctx.fillStyle = glitterColor;
+    for (let i = 0; i < 5; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const distance = 4 + Math.random() * 14;
+      const size = 1 + Math.random() * 2.5;
+      ctx.beginPath();
+      ctx.arc(
+        x + Math.cos(angle) * distance,
+        y + Math.sin(angle) * distance,
+        size,
+        0,
+        Math.PI * 2
+      );
+      ctx.fill();
+    }
+    ctx.restore();
+  };
+
 
   const drawSymmetric = (ctx, x, y) => {
     const centerX = ctx.canvas.width / 2;
@@ -84,9 +115,7 @@ const Sketchboard = () => {
   const startDrawing = (e) => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
-    const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    const { x, y } = getCanvasPoint(e);
 
     setStartPos({ x, y });
 
@@ -112,9 +141,7 @@ const Sketchboard = () => {
     
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
-    const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    const { x, y } = getCanvasPoint(e);
 
     if (tool === 'select' && selectedShape) {
       const newShapes = shapes.map(shape => 
@@ -130,10 +157,10 @@ const Sketchboard = () => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.putImageData(drawHistory[currentStep], 0, 0);
 
-    if (tool === 'square' || tool === 'circle') {
+    if (tool === 'square' || tool === 'circle' || tool === 'triangle' || tool === 'line' || tool === 'star') {
       if (tool === 'square') {
         ctx.strokeRect(startPos.x, startPos.y, x - startPos.x, y - startPos.y);
-      } else {
+      } else if (tool === 'circle') {
         ctx.beginPath();
         ctx.ellipse(
           startPos.x + (x - startPos.x) / 2,
@@ -144,6 +171,33 @@ const Sketchboard = () => {
           0,
           2 * Math.PI
         );
+        ctx.stroke();
+      } else if (tool === 'triangle') {
+        ctx.beginPath();
+        ctx.moveTo(startPos.x + (x - startPos.x) / 2, startPos.y);
+        ctx.lineTo(x, y);
+        ctx.lineTo(startPos.x, y);
+        ctx.closePath();
+        ctx.stroke();
+      } else if (tool === 'line') {
+        ctx.beginPath();
+        ctx.moveTo(startPos.x, startPos.y);
+        ctx.lineTo(x, y);
+        ctx.stroke();
+      } else if (tool === 'star') {
+        const centerX = (startPos.x + x) / 2;
+        const centerY = (startPos.y + y) / 2;
+        const radius = Math.max(Math.abs(x - startPos.x), Math.abs(y - startPos.y)) / 2;
+        ctx.beginPath();
+        for (let i = 0; i < 10; i++) {
+          const angle = -Math.PI / 2 + (i * Math.PI) / 5;
+          const pointRadius = i % 2 === 0 ? radius : radius * 0.42;
+          const pointX = centerX + Math.cos(angle) * pointRadius;
+          const pointY = centerY + Math.sin(angle) * pointRadius;
+          if (i === 0) ctx.moveTo(pointX, pointY);
+          else ctx.lineTo(pointX, pointY);
+        }
+        ctx.closePath();
         ctx.stroke();
       }
     } else {
@@ -157,6 +211,7 @@ const Sketchboard = () => {
         ctx.lineTo(x, y);
         ctx.stroke();
       }
+      if (glitterMode && tool !== 'eraser') drawGlitter(ctx, x, y);
     }
   };
 
@@ -165,7 +220,7 @@ const Sketchboard = () => {
       const canvas = canvasRef.current;
       const ctx = canvas.getContext('2d');
       
-      if (tool === 'square' || tool === 'circle') {
+      if (tool === 'square' || tool === 'circle' || tool === 'triangle' || tool === 'line' || tool === 'star') {
         setShapes([...shapes, { 
           type: tool, 
           x: startPos.x, 
@@ -275,6 +330,30 @@ const Sketchboard = () => {
               <Circle className="h-5 w-5" />
             </Button>
             <Button
+              variant={tool === 'triangle' ? 'default' : 'outline'}
+              onClick={() => setTool('triangle')}
+              className="h-10 w-10 p-2"
+              title="Triangle"
+            >
+              <Triangle className="h-5 w-5" />
+            </Button>
+            <Button
+              variant={tool === 'line' ? 'default' : 'outline'}
+              onClick={() => setTool('line')}
+              className="h-10 w-10 p-2"
+              title="Line"
+            >
+              <Minus className="h-5 w-5" />
+            </Button>
+            <Button
+              variant={tool === 'star' ? 'default' : 'outline'}
+              onClick={() => setTool('star')}
+              className="h-10 w-10 p-2"
+              title="Star"
+            >
+              <Star className="h-5 w-5" />
+            </Button>
+            <Button
               variant={tool === 'select' ? 'default' : 'outline'}
               onClick={() => setTool('select')}
               className="h-10 w-10 p-2"
@@ -300,6 +379,14 @@ const Sketchboard = () => {
               title="Mirror Mode"
             >
               <Copy className="h-5 w-5" />
+            </Button>
+            <Button
+              variant={glitterMode ? 'default' : 'outline'}
+              onClick={() => setGlitterMode(!glitterMode)}
+              className="h-10 w-10 p-2"
+              title="Glitter Brush"
+            >
+              <Sparkles className="h-5 w-5" />
             </Button>
             <Button
               variant="outline"
